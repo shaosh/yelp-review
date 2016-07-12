@@ -1,5 +1,5 @@
 {
-  "name": "hackthon",
+  "name": "yelp-review",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -9,6 +9,7 @@
     "body-parser": "~1.15.1",
     "cookie-parser": "~1.4.3",
     "express": "~4.13.4",
+    "file-stream-rotator": "0.0.6",
     "lodash": "^4.13.1",
     "morgan": "~1.7.0",
     "nonce": "^1.0.4",
