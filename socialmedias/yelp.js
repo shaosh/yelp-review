@@ -3,6 +3,7 @@ var oauthSignature = require('oauth-signature');
 var n = require('nonce')();  
 var qs = require('querystring');  
 var _ = require('lodash');
+var moment = require('moment');
 
 var urlBase = 'http://api.yelp.com/v2/business/';
 
@@ -10,6 +11,8 @@ var yelpConsumerKey = 'EhTkTCv9eYm6FasVNb1wAw';
 var yelpConsumerSecret = '2blae3e_5mjmCKhxUehxgWK9Ojw';
 var yelpToken = 'XgKX6d7mK6oopPohWdnhlYla3Z8IaufF';
 var yelpTokenSecret = '_Z-uhW1cf5xOPQLUoixzASSy_YA'; 
+
+var bizHashmap = bizHashmap || {};
 
 var createUrl = function(bizId){
 	var apiUrl = urlBase + bizId;
@@ -48,12 +51,22 @@ var yelp = {
 					return callback('Yelp API Body: Empty body');
 				}
 				if(reviewOnly && body.reviews && body.reviews.length){
-					return callback(null, {data: body.reviews[0]});
+					cacheBiz(bizId, body);
+					var bizObj = bizHashmap[bizId];
+					if(bizObj && bizObj.review_count){
+						var yesterday = moment(new Date()).subtract(1, 'days').unix();
+						var diff = moment(new Date(bizObj.last_review.timestamp)).diff(new Date(yesterday), 'hours', true);
+						if(diff >= 0 && diff <= 24){
+							return callback(null, {rating: bizObj.last_review.rating, comment: bizObj.last_review.excerpt});
+						}						
+					}
+					return callback(null, 0);
 				}
 				else if(reviewOnly){
-					return callback(null, {data: 0});
+					cacheBiz(bizId, body);
+					return callback(null, 0);
 				}
-				return callback(null, {data: body});
+				return callback(null, body);
 			}
 			else if(err){
 				return callback('Yelp API Error: ' + JSON.stringify(err));
@@ -64,5 +77,28 @@ var yelp = {
 		});
 	}
 };
+
+var cacheBiz = function(bizId, body){
+	if(!bizHashmap[bizId]){
+		bizHashmap[bizId] = {
+			id: bizId,
+			rating: -1,
+			review_count: 0,
+			last_review:{
+				rating: -1,
+				timestamp: 0,
+				excerpt: ''
+			}
+		};
+	}
+	if(!body || !body.review_count || bizHashmap[bizId].review_count === body.review_count){
+		return;
+	}
+	bizHashmap[bizId].rating = body.rating;
+	bizHashmap[bizId].review_count = body.review_count;
+	bizHashmap[bizId].last_review.rating = body.reviews[0].rating;
+	bizHashmap[bizId].last_review.timestamp = body.reviews[0].time_created;
+	bizHashmap[bizId].last_review.excerpt = body.reviews[0].excerpt;
+}
 
 module.exports = yelp;
