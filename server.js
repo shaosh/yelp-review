@@ -1,12 +1,12 @@
 var express = require('express');
-var path = require('path');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var fs = require('fs');
 var FileStreamRotator = require('file-stream-rotator');
 
-var routes = require('./routes/index');
+//var routes = require('./routes/apiRouter');
+var routes = require('./routes/crawlerRouter');
 
 var app = express();
 

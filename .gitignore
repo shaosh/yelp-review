@@ -35,3 +35,13 @@ jspm_packages
 
 # Optional REPL history
 .node_repl_history
+
+# public/private key file
+*.pem
+*.ppk
+
+# txt file
+*.txt
+
+#cache folder
+.cache
