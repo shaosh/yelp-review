@@ -8,7 +8,14 @@ How to start:
 End Point: Get business review by business_id 
 
 		/yelp/:business_id
+
+Return:
 		
+		"data": {
+			"rating": number,
+			"comment": string
+		}
+
 Reference: 
 
 		https://www.yelp.com/developers/documentation/v2/business
