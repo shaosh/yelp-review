@@ -61,7 +61,15 @@ End Point 4: Monitor review change
 
 Return: 
     
-    boolean			
+    boolean		
+
+End Point 5: Get both business info and all reviews 
+
+		/yelp/:business_id/init
+
+Return: 
+    
+    Combination of responses of End Point 1 and End Point 2		
 
 Reference: 
 
