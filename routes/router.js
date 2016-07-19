@@ -19,6 +19,22 @@ router.get('/yelp/:business_id/info', function(req, res) {
 	}); 	
 });
 
+router.get('/yelp/:business_id/monitor', function(req, res) {	
+	if(!req.params.business_id){
+		res.send({error: 'Empty business_id'});
+		return;
+	}
+
+	yelpApi.monitor(req.params.business_id, function(err, changed){
+		if(err){
+			res.send({error: err});
+		}
+		else{
+			res.send(changed);
+		}
+	}); 	
+});
+
 router.get('/yelp/:business_id/lastreview', function(req, res) {	
 	if(!req.params.business_id){
 		res.send({error: 'Empty business_id'});

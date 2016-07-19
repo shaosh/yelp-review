@@ -13,6 +13,7 @@ var yelpToken = 'XgKX6d7mK6oopPohWdnhlYla3Z8IaufF';
 var yelpTokenSecret = '_Z-uhW1cf5xOPQLUoixzASSy_YA'; 
 
 var bizHashmap = bizHashmap || {};
+var bizReviewCount = {};
 
 var createUrl = function(bizId){
 	var apiUrl = urlBase + bizId;
@@ -38,7 +39,7 @@ var createUrl = function(bizId){
 var yelp = {
 	findBusiness: function(bizId, reviewOnly, callback){
 		if(!bizId){
-			return callback('Error: Empty bizId');
+			return callback('Yelp API findBusiness Error: Empty bizId');
 		}
 		
 		var url = createUrl(bizId);
@@ -48,7 +49,7 @@ var yelp = {
 					body = JSON.parse(body);
 				}
 				else{
-					return callback('Yelp API Body: Empty body');
+					return callback('Yelp API findBusiness Body: Empty body');
 				}
 				if(reviewOnly && body.reviews && body.reviews.length){
 					cacheBiz(bizId, body);
@@ -69,10 +70,33 @@ var yelp = {
 				return callback(null, body);
 			}
 			else if(err){
-				return callback('Yelp API Error: ' + JSON.stringify(err));
+				return callback('Yelp API findBusiness Error: ' + JSON.stringify(err));
 			}
 			else{
-				return callback('Yelp API Response: ' + JSON.stringify(response));
+				return callback('Yelp API findBusiness Response: ' + JSON.stringify(response));
+			}
+		});
+	},
+
+	monitor: function(bizId, callback){		
+		this.findBusiness(bizId, false, function(err, data){
+			if(err){
+				return callback('Yelp API monitor Error: ' + JSON.stringify(err));
+			}
+			else if(!data){
+				return callback('Yelp API monitor Error: Empty response');
+			}
+			else{
+				console.log('data.review_count', data.review_count);
+				if(!bizReviewCount[bizId]){
+					bizReviewCount[bizId] = !data.review_count ? 0 : data.review_count;
+					return callback(null, !!data.review_count);
+				}
+				if(bizReviewCount[bizId] !== data.review_count){
+					bizReviewCount[bizId] = data.review_count;
+					return callback(null, true);
+				}
+				return callback(null, false);				
 			}
 		});
 	}
