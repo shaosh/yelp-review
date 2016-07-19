@@ -6,7 +6,8 @@ var fs = require('fs');
 var FileStreamRotator = require('file-stream-rotator');
 
 //var routes = require('./routes/apiRouter');
-var routes = require('./routes/crawlerRouter');
+// var routes = require('./routes/crawlerRouter');
+var routes = require('./routes/router');
 
 var app = express();
 

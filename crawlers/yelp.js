@@ -10,26 +10,58 @@ const urlBase = 'http://www.yelp.com/biz/';
 
 var bizMap = bizMap || {};
 
-var getReview = function(bizId){
+var getReview = function(bizId, allReviews){
 	var defer = Q.defer();
-
 	crawler.get(urlBase, bizId).then(
 		function(content){
-			var review = parser.parse(content, bizId);			
-			var prevReview = bizMap[bizId];
-			if(!prevReview){
-				bizMap[bizId] = review;
-			}
-			if(!review.commentId || (prevReview && prevReview.commentId === review.commentId) || !isFresh(review.date)){
+			var reviews = parser.parse(content, bizId, allReviews);			
+			if(!reviews){
 				defer.resolve(null);
 				return;
 			}
-			bizMap[bizId] = review;
-			defer.resolve({
-				rating: review.rating,
-				comment: review.comment
-			});
-			return;
+			var prevReview = bizMap[bizId];
+			if(!prevReview){
+				bizMap[bizId] = reviews;
+			}
+			if(!allReviews){
+				var review = reviews[0];
+				if(!review.commentId || (prevReview && prevReview.commentId === review.commentId) || !isFresh(review.date)){
+					defer.resolve(null);
+					return;
+				}
+				bizMap[bizId] = reviews.concat(bizMap[bizId]);
+				defer.resolve(reviews);
+			}
+			else{
+				var lastPrevReview = bizMap[bizId][0];
+				var firstCurrReview = reviews[reviews.length - 1];
+				var lastCurrReview = reviews[0];
+				var diff = moment(firstCurrReview.date).diff(moment(lastPrevReview.date));
+				if(diff > 0){
+					bizMap[bizId] = reviews.concat(bizMap[bizId]);
+				}
+				else if(lastCurrReview.commentId !== lastPrevReview.commentId){
+					var hash = {};
+					for(var i = 0; i < reviews.length; i++){
+						hash[reviews[i].commentId] = true;
+					}
+
+					var index = -1;
+					for(var i = 0; i < bizMap.length; i++){
+						if(!hash[bizMap[bizId][i].commentId]){
+							index = i; 
+							break;
+						}
+					}
+
+					if(index > -1){
+						var oldArray = bizMap[bizId].slice(index);
+						bizMap[bizId] = reviews.concat(oldArray);
+					}
+				}
+				defer.resolve(bizMap[bizId]);
+			}
+			return;			
 		},
 		function(e){
 			console.log('getReview crawler.get ERROR:', e);			
