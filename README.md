@@ -54,7 +54,14 @@ Return:
 			avatarLink: string,
 			author: string
 		}]
-		
+
+End Point 4: Monitor review change 
+
+		/yelp/:business_id/monitor
+
+Return: 
+    
+    boolean			
 
 Reference: 
 
