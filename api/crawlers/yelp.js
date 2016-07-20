@@ -10,9 +10,9 @@ const urlBase = 'http://www.yelp.com/biz/';
 
 var bizMap = bizMap || {};
 
-var getReview = function(bizId, allReviews){
+var getReview = function(bizId, allReviews, changedFromCache){
 	var defer = Q.defer();
-	crawler.get(urlBase, bizId).then(
+	crawler.get(urlBase, bizId, changedFromCache).then(
 		function(content){
 			var reviews = parser.parse(content, bizId, allReviews);			
 			if(!reviews){
@@ -40,7 +40,7 @@ var getReview = function(bizId, allReviews){
 				if(diff > 0){
 					bizMap[bizId] = reviews.concat(bizMap[bizId]);
 				}
-				else if(lastCurrReview.commentId !== lastPrevReview.commentId){
+				else if(lastCurrReview.commentId !== lastPrevReview.commentId || bizMap[bizId].length !== reviews.length){					
 					var hash = {};
 					for(var i = 0; i < reviews.length; i++){
 						hash[reviews[i].commentId] = true;
@@ -48,16 +48,11 @@ var getReview = function(bizId, allReviews){
 
 					var index = -1;
 					for(var i = 0; i < bizMap.length; i++){
-						if(!hash[bizMap[bizId][i].commentId]){
-							index = i; 
-							break;
+						if(hash[bizMap[bizId][i].commentId]){
+							reviews.push(bizMap[bizId][i]);
 						}
 					}
-
-					if(index > -1){
-						var oldArray = bizMap[bizId].slice(index);
-						bizMap[bizId] = reviews.concat(oldArray);
-					}
+					bizMap[bizId] = reviews;
 				}
 				defer.resolve(bizMap[bizId]);
 			}

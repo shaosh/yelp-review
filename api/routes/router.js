@@ -26,14 +26,21 @@ router.get('/yelp/:business_id/init', function(req, res) {
 	};
 
 	var getReviews = function(){
-		yelpCrawler.getReview(req.params.business_id, true).then(
-			function(data){
-				deferReviews.resolve({id: 'getReviews', data: data});			
-			},
-			function(err){
-				deferReviews.reject({error: err});
+		yelpApi.monitor(req.params.business_id, function(err, changed){
+			if(err){
+				res.send({error: err});
 			}
-		);	
+			else{
+				yelpCrawler.getReview(req.params.business_id, true, changed).then(
+					function(data){
+						deferReviews.resolve({id: 'getReviews', data: data});		
+					},
+					function(err){
+						deferReviews.reject({error: err});
+					}
+				);
+			}
+		});	
 		return deferReviews.promise; 	
 	};
 
@@ -51,7 +58,6 @@ router.get('/yelp/:business_id/init', function(req, res) {
 					}
 				}
 			});
-			console.log('obj', obj)
 			res.json({data: obj});
 		},function(errs){
 			res.send({error: err});
@@ -102,7 +108,7 @@ router.get('/yelp/:business_id/lastreview', function(req, res) {
 		}
 		else{
 			if(changed){
-				yelpCrawler.getReview(req.params.business_id, false).then(
+				yelpCrawler.getReview(req.params.business_id, false, changed).then(
 					function(data){
 						res.send({data: data});			
 					},
@@ -124,14 +130,21 @@ router.get('/yelp/:business_id/reviews', function(req, res) {
 		return;
 	}
 
-	yelpCrawler.getReview(req.params.business_id, true).then(
-		function(data){
-			res.send({data: data});			
-		},
-		function(err){
+	yelpApi.monitor(req.params.business_id, function(err, changed){
+		if(err){
 			res.send({error: err});
 		}
-	);	
+		else{
+			yelpCrawler.getReview(req.params.business_id, true, changed).then(
+				function(data){
+					res.send({data: data});			
+				},
+				function(err){
+					res.send({error: err});
+				}
+			);
+		}
+	});	
 });
 
 module.exports = router;

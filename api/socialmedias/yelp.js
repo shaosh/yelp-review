@@ -87,7 +87,7 @@ var yelp = {
 				return callback('Yelp API monitor Error: Empty response');
 			}
 			else{
-				console.log('data.review_count', data.review_count);
+				console.log('data.review_count', data.review_count, !!data.review_count);
 				if(!bizReviewCount[bizId]){
 					bizReviewCount[bizId] = !data.review_count ? 0 : data.review_count;
 					return callback(null, !!data.review_count);

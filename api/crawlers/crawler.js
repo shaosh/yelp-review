@@ -5,17 +5,17 @@ var http = require('http'),
 
 var crawler = function(){};
 
-crawler.prototype.get = function(url, bizId){
+crawler.prototype.get = function(url, bizId, changedFromCache){
 	var defer = Q.defer();
 	cacher.get(bizId).then(
 		function(content){
-			if(content){
+			if(content && !changedFromCache){
 				defer.resolve(content);
 				return;
 			}
 
 			var option = {};			
-			url = url + bizId;
+			url = url + bizId + '?sort_by=date_desc';
 			option = {
 				url: url,
 				method: 'GET'
