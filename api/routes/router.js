@@ -3,6 +3,29 @@ var Q = require('q');
 var router = express.Router();
 var yelpApi = require('../socialmedias/yelp');
 var yelpCrawler = require('../crawlers/yelp');
+var request = require('request');
+
+function analyseComment(data, res) {
+  console.log('call func analyseComment');
+
+  //Lets configure and request
+  request({
+    url:'http://127.0.0.1:5000/api/nlp',
+    method: 'POST',
+    //Lets post the following key/values as form
+    json: {
+      data: data
+    }
+  }, function(error, response, body){
+    if(error) {
+      console.log(error);
+
+    } else {
+      console.log(response.statusCode, body);
+      res.send( {data: body.data} );
+    }
+  });
+}
 
 router.get('/yelp/:business_id/init', function(req, res) {	
 	if(!req.params.business_id){
@@ -137,7 +160,7 @@ router.get('/yelp/:business_id/reviews', function(req, res) {
 		else{
 			yelpCrawler.getReview(req.params.business_id, true, changed).then(
 				function(data){
-					res.send({data: data});			
+          analyseComment(data, res);
 				},
 				function(err){
 					res.send({error: err});
