@@ -2,8 +2,9 @@
 A REST API to fetch Yelp Review built with Nodejs and Express
 
 How to start:
-
-		npm start
+```
+npm start
+```
 How to run it in Openstack even when SSH is disconnected:
 ```
 nohup `npm start` &
