@@ -9,4 +9,5 @@ Before running sentiment.py. The following steps are required
 python sentiment.py
 ```
 
-Then the server could be accessed through: http://127.0.0.1:5000/api/nlp
+### Accessed Server
+http://127.0.0.1:5000/api/nlp
