@@ -70,6 +70,6 @@ app.use(function(err, req, res, next) {
 });
 
 // START THE SERVER
-var port = process.env.PORT || 8000;        // set our port
+var port = process.env.PORT || 3000;        // set our port
 app.listen(port);
 console.log('Magic happens on port ' + port);
