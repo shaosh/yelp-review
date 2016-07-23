@@ -10,7 +10,7 @@ python sentiment.py
 ```
 ### Run server in background
 ```
-python sentiment.py &
+nohup python sentiment.py &
 ```
 
 ### Accessed Server
