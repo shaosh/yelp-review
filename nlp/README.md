@@ -8,6 +8,10 @@ Before running sentiment.py. The following steps are required
 ```
 python sentiment.py
 ```
+### Run server in background
+```
+python sentiment.py &
+```
 
 ### Accessed Server
 http://127.0.0.1:5000/api/nlp
