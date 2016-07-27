@@ -10,6 +10,8 @@ How to run it in Openstack even when SSH is disconnected:
 nohup `npm start` &
 ```
 
+The server will be running on `Port 3000`
+
 End Point 1: Get business info by business_id 
 
 		/api/yelp/:business_id/info
