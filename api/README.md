@@ -12,7 +12,7 @@ nohup `npm start` &
 
 End Point 1: Get business info by business_id 
 
-		/yelp/:business_id/info
+		/api/yelp/:business_id/info
 
 Return: 
     
@@ -21,7 +21,7 @@ Return:
 
 End Point 2: Get business reviews by business_id 
 
-		/yelp/:business_id/reviews
+		/api/yelp/:business_id/reviews
 
 Return:
 
@@ -46,7 +46,7 @@ Return:
 
 End Point 3: Get business last review by business_id 
 
-		/yelp/:business_id/lastreview
+		/api/yelp/:business_id/lastreview
 
 Return:
 
@@ -68,7 +68,7 @@ Return:
 
 End Point 4: Monitor review change 
 
-		/yelp/:business_id/monitor
+		/api/yelp/:business_id/monitor
 
 Return: 
     
@@ -76,7 +76,7 @@ Return:
 
 End Point 5: Get both business info and all reviews 
 
-		/yelp/:business_id/init
+		/api/yelp/:business_id/init
 
 Return: 
     
